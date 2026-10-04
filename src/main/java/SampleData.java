@@ -35,7 +35,7 @@ public class SampleData {
 
     public static final Product LENOVO_LEGION =
             new Product(8, "Lenovo Legion 5", Category.LAPTOP,
-                    new BigDecimal("1199.00"), 6);
+                    new BigDecimal("1199.00"), 10);
 
     public static final Product AIRPODS_PRO =
             new Product(9, "AirPods Pro", Category.HEADPHONES,
