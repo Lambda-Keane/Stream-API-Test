@@ -220,7 +220,7 @@ class ProductAnalytics {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (value, _) -> value,
+                        (existing, _) -> existing,
                         LinkedHashMap::new
                 ));
     }
@@ -238,25 +238,20 @@ class ProductAnalytics {
     public Map<Category, BigDecimal> calculateCategoryRevenue(
             List<Order> orders
     ) {
-        var quantityByProduct = orders.stream()
+        var result = orders.stream()
                 .filter(o -> o.status() != OrderStatus.CANCELLED)
                 .flatMap(o -> o.items().stream())
-                .collect(Collectors.groupingBy(OrderItem::product, Collectors.summingInt(OrderItem::quantity)));
-        var unsortedReport = quantityByProduct.entrySet().stream()
-                .collect(Collectors.toMap(
-                        entry -> entry.getKey().category(),
-                        entry -> entry.getKey().price().multiply(BigDecimal.valueOf(entry.getValue())),
-                        BigDecimal::add,
-                        LinkedHashMap::new
-                ));
-        return unsortedReport.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (a, _) -> a,
-                        LinkedHashMap::new
-                ));
+                .collect(Collectors.groupingBy(i -> i.product().category(),
+                        Collectors.mapping(
+                                i -> i.product().price().multiply(BigDecimal.valueOf(i.quantity())),
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+                        ))
+                );
+        return result.entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
+                        (existing, _) -> existing,
+                        LinkedHashMap::new));
     }
 
 
