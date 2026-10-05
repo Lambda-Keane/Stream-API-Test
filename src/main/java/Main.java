@@ -3,5 +3,5 @@ void main() {
     final List<Product> products = SampleData.PRODUCTS;
     final List<Order> orders = SampleData.ORDERS;
     ProductAnalytics debug = new ProductAnalytics();
-    System.out.println(debug.recommendProducts(ALICE, products, orders, 5));
+    System.out.println(debug.groupByCategoryAndStock(products));
 }

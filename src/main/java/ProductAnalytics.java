@@ -361,7 +361,10 @@ class ProductAnalytics {
             Category category,
             BigDecimal minimumPrice
     ) {
-        return null;
+        return products.stream()
+                .filter(p -> p.category().equals(category) && p.price().compareTo(minimumPrice) > 0)
+                .map(Product::name)
+                .findFirst();
     }
 
 
@@ -376,7 +379,8 @@ class ProductAnalytics {
     public Optional<Product> findMostExpensiveProduct(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .max(Comparator.comparing(Product::price));
     }
 
 
@@ -387,7 +391,8 @@ class ProductAnalytics {
     public Optional<Product> findCheapestProduct(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .min(Comparator.comparing(Product::price));
     }
 
 
@@ -407,7 +412,8 @@ class ProductAnalytics {
     public Map<Boolean, List<Product>> partitionByStock(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .collect(Collectors.partitioningBy(p -> p.stock() > 0));
     }
 
 
@@ -421,7 +427,8 @@ class ProductAnalytics {
     public boolean hasOutOfStockProduct(
             List<Product> products
     ) {
-        return false;
+        return products.stream()
+                .anyMatch(p -> p.stock() == 0);
     }
 
 
@@ -431,7 +438,8 @@ class ProductAnalytics {
     public boolean allProductsHavePositivePrice(
             List<Product> products
     ) {
-        return false;
+        return products.stream()
+                .allMatch(p -> p.price().signum() == 1);
     }
 
 
@@ -441,7 +449,8 @@ class ProductAnalytics {
     public boolean noPhoneProducts(
             List<Product> products
     ) {
-        return false;
+        return products.stream()
+                .noneMatch(p -> p.category() == Category.PHONE);
     }
 
 
@@ -461,7 +470,9 @@ class ProductAnalytics {
     public Map<String, BigDecimal> createPriceMap(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .collect(Collectors.toMap(Product::name, Product::price,
+                        (existing, replacement) -> existing));
     }
 
 
@@ -479,7 +490,8 @@ class ProductAnalytics {
     public Map<String, BigDecimal> createPriceMapKeepingHighestPrice(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .collect(Collectors.toMap(Product::name, Product::price, BigDecimal::max));
     }
 
 
@@ -496,7 +508,9 @@ class ProductAnalytics {
     public String joinProductNames(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .map(Product::name)
+                .collect(Collectors.joining(", "));
     }
 
 
@@ -508,7 +522,9 @@ class ProductAnalytics {
     public String joinProductNamesWithSeparator(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .map(Product::name)
+                .collect(Collectors.joining(" | "));
     }
 
 
@@ -536,7 +552,9 @@ class ProductAnalytics {
     public Map<Category, Map<Boolean, List<Product>>> groupByCategoryAndStock(
             List<Product> products
     ) {
-        return null;
+        return products.stream()
+                .collect(Collectors.groupingBy(Product::category,
+                        Collectors.partitioningBy(p -> p.stock() > 0)));
     }
 
 
